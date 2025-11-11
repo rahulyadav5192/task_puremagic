@@ -350,7 +350,7 @@ Visit Home Page (/):
   - Add products to cart (if logged in)
   - Click "Review" to scroll to testimonials
   ↓
-Visit Products Page (/products):
+Visit Products Page (/products): 
   - View all products
   - Search and filter
   - Click product to view details
@@ -438,6 +438,3 @@ Product Detail Page (/products/{id}):
 - Clear Vite cache: `rm -rf node_modules/.vite`
 - Restart dev server: `npm run dev`
 
-## License
-
-This project is open-sourced software.
