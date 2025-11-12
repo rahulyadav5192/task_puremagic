@@ -4,8 +4,10 @@ import { Link, usePage, router } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 
 export default function SidebarLayout({ children }) {
-    const user = usePage().props.auth.user;
+    const page = usePage();
+    const user = page.props.auth.user;
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
     const [darkMode, setDarkMode] = useState(() => {
         if (typeof window !== 'undefined') {
             const savedTheme = localStorage.getItem('theme');
@@ -28,6 +30,12 @@ export default function SidebarLayout({ children }) {
             document.documentElement.classList.remove('dark');
         }
     }, []);
+
+    useEffect(() => {
+        if (page.props.cartCount !== undefined) {
+            setCartCount(page.props.cartCount);
+        }
+    }, [page.props.cartCount]);
 
     const toggleTheme = () => {
         const newDarkMode = !darkMode;
@@ -143,7 +151,32 @@ export default function SidebarLayout({ children }) {
                     <Link href="/" className="flex items-center">
                         <ApplicationLogo className="h-8 w-8 fill-current text-indigo-600" />
                     </Link>
-                    <div className="w-6"></div>
+                    <Link href={route('cart.index')} className="relative p-2 text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">
+                        <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        {cartCount > 0 && (
+                            <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                                {cartCount}
+                            </span>
+                        )}
+                    </Link>
+                </header>
+
+                <header className="hidden lg:flex h-16 items-center justify-between border-b border-gray-200 bg-white px-6 dark:border-gray-700 dark:bg-gray-800">
+                    <div className="flex-1"></div>
+                    <div className="flex items-center space-x-4">
+                        <Link href={route('cart.index')} className="relative p-2 text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400 transition-colors">
+                            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                            {cartCount > 0 && (
+                                <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                                    {cartCount}
+                                </span>
+                            )}
+                        </Link>
+                    </div>
                 </header>
 
                 <main className="flex-1 overflow-y-auto bg-gray-50 p-6 dark:bg-gray-900">{children}</main>

@@ -20,7 +20,7 @@ class HandleInertiaRequests extends Middleware
         $user = $request->user();
         $cartCount = 0;
 
-        if ($user && $user->role === 'buyer') {
+        if ($user) {
             $cartCount = Cart::where('user_id', $user->id)->sum('quantity');
         }
 
