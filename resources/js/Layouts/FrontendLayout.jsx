@@ -7,6 +7,8 @@ export default function FrontendLayout({ children }) {
     const user = page.props.auth?.user;
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [cartCount, setCartCount] = useState(0);
+    const [scrolled, setScrolled] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const menuRef = useRef(null);
     
     useEffect(() => {
@@ -14,6 +16,14 @@ export default function FrontendLayout({ children }) {
             setCartCount(page.props.cartCount);
         }
     }, [page.props.cartCount]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 10);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -38,14 +48,21 @@ export default function FrontendLayout({ children }) {
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-50">
-            <nav className="bg-white shadow-md sticky top-0 z-40">
+            <nav className={`sticky top-0 z-50 transition-all duration-300 ${
+                scrolled 
+                    ? 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100' 
+                    : 'bg-white/80 backdrop-blur-sm shadow-sm'
+            }`}>
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex h-20 justify-between items-center">
                         <div className="flex items-center space-x-8">
-                            <Link href="/" className="flex items-center">
-                                <ApplicationLogo className="block h-10 w-auto fill-current text-indigo-600" />
+                            <Link href="/" className="flex items-center group">
+                                <ApplicationLogo className="block h-10 w-auto fill-current transition-colors" style={{ color: '#793011' }} />
+                                <span className="ml-2 text-xl font-bold" style={{ color: '#793011' }}>
+                                    PureMagic
+                                </span>
                             </Link>
-                            <div className="hidden md:flex items-center space-x-6">
+                            <div className="hidden md:flex items-center space-x-1">
                                 <Link 
                                     href={route('home')} 
                                     onClick={(e) => {
@@ -55,12 +72,32 @@ export default function FrontendLayout({ children }) {
                                             window.scrollTo({ top: 0, behavior: 'smooth' });
                                         }
                                     }}
-                                    className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                                    className="relative px-4 py-2 text-sm font-semibold text-gray-700 transition-all duration-200 rounded-lg group"
+                                    style={{ '--hover-color': '#793011' }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.color = '#793011';
+                                        e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.color = '';
+                                        e.target.style.backgroundColor = '';
+                                    }}
                                 >
-                                    Home
+                                    <span className="relative z-10">Home</span>
                                 </Link>
-                                <Link href={route('products.index')} className="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
-                                    Products
+                                <Link 
+                                    href={route('products.index')} 
+                                    className="relative px-4 py-2 text-sm font-semibold text-gray-700 transition-all duration-200 rounded-lg group"
+                                    onMouseEnter={(e) => {
+                                        e.target.style.color = '#793011';
+                                        e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.color = '';
+                                        e.target.style.backgroundColor = '';
+                                    }}
+                                >
+                                    <span className="relative z-10">Products</span>
                                 </Link>
                                 <a 
                                     href="#testimonials" 
@@ -91,23 +128,55 @@ export default function FrontendLayout({ children }) {
                                             });
                                         }
                                     }}
-                                    className="text-gray-700 hover:text-indigo-600 font-medium transition-colors"
+                                    className="relative px-4 py-2 text-sm font-semibold text-gray-700 transition-all duration-200 rounded-lg group"
+                                    onMouseEnter={(e) => {
+                                        e.target.style.color = '#793011';
+                                        e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.color = '';
+                                        e.target.style.backgroundColor = '';
+                                    }}
                                 >
-                                    Review
+                                    <span className="relative z-10">Review</span>
                                 </a>
                             </div>
                         </div>
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-3">
+                            {/* Mobile menu button */}
+                            <button
+                                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                                className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                            >
+                                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    {mobileMenuOpen ? (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    ) : (
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                    )}
+                                </svg>
+                            </button>
                             {user && (
                                 <>
                                     {user.role === 'buyer' && (
                                         <>
-                                            <Link href={route('cart.index')} className="relative p-2 text-gray-700 hover:text-indigo-600 transition-colors">
-                                                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <Link 
+                                                href={route('cart.index')} 
+                                                className="relative p-2.5 text-gray-700 transition-all duration-200 rounded-lg group"
+                                                onMouseEnter={(e) => {
+                                                    e.target.style.color = '#793011';
+                                                    e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.target.style.color = '';
+                                                    e.target.style.backgroundColor = '';
+                                                }}
+                                            >
+                                                <svg className="h-6 w-6 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#793011' }}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                                 </svg>
                                                 {cartCount > 0 && (
-                                                    <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                                                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white shadow-lg animate-pulse" style={{ backgroundColor: '#793011' }}>
                                                         {cartCount}
                                                     </span>
                                                 )}
@@ -115,24 +184,36 @@ export default function FrontendLayout({ children }) {
                                             <div className="relative" ref={menuRef}>
                                                 <button
                                                     onClick={() => setShowUserMenu(!showUserMenu)}
-                                                    className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition-colors"
+                                                    className="flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                                                    style={{ backgroundColor: 'rgba(121, 48, 17, 0.1)', color: '#793011' }}
+                                                    onMouseEnter={(e) => {
+                                                        e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.2)';
+                                                    }}
+                                                    onMouseLeave={(e) => {
+                                                        e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                                    }}
                                                 >
-                                                    <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#793011' }}>
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                                     </svg>
                                                 </button>
                                                 {showUserMenu && (
-                                                    <div className="absolute right-0 mt-2 w-48 rounded-lg bg-white shadow-xl ring-1 ring-black ring-opacity-5 z-50">
+                                                    <div className="absolute right-0 mt-2 w-56 rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                                                         <div className="py-2">
-                                                            <div className="px-4 py-2 border-b border-gray-100">
-                                                                <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                                                                <p className="text-xs text-gray-500">{user.email}</p>
+                                                            <div className="px-4 py-3 border-b border-gray-100" style={{ backgroundColor: 'rgba(121, 48, 17, 0.1)' }}>
+                                                                <p className="text-sm font-semibold text-gray-900">{user.name}</p>
+                                                                <p className="text-xs text-gray-500 mt-0.5">{user.email}</p>
                                                             </div>
                                                             <button
                                                                 onClick={handleLogout}
-                                                                className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                                                                className="block w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gradient-to-r hover:from-red-50 hover:to-pink-50 hover:text-red-600 transition-all duration-200"
                                                             >
-                                                                Logout
+                                                                <span className="flex items-center">
+                                                                    <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                                                    </svg>
+                                                                    Logout
+                                                                </span>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -142,22 +223,40 @@ export default function FrontendLayout({ children }) {
                                     )}
                                     {(user.role === 'admin' || user.role === 'seller') && (
                                         <>
-                                            <Link href={route('cart.index')} className="relative p-2 text-gray-700 hover:text-indigo-600 transition-colors">
-                                                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <Link 
+                                                href={route('cart.index')} 
+                                                className="relative p-2.5 text-gray-700 transition-all duration-200 rounded-lg group"
+                                                onMouseEnter={(e) => {
+                                                    e.target.style.color = '#793011';
+                                                    e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.target.style.color = '';
+                                                    e.target.style.backgroundColor = '';
+                                                }}
+                                            >
+                                                <svg className="h-6 w-6 transition-transform group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#793011' }}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                                 </svg>
                                                 {cartCount > 0 && (
-                                                    <span className="absolute top-0 right-0 flex h-5 w-5 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                                                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white shadow-lg animate-pulse" style={{ backgroundColor: '#793011' }}>
                                                         {cartCount}
                                                     </span>
                                                 )}
                                             </Link>
                                             <Link 
                                                 href={route('dashboard')} 
-                                                className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition-colors"
+                                                className="flex h-10 w-10 items-center justify-center rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                                                style={{ backgroundColor: 'rgba(121, 48, 17, 0.1)', color: '#793011' }}
+                                                onMouseEnter={(e) => {
+                                                    e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.2)';
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                                }}
                                                 title="Dashboard"
                                             >
-                                                <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: '#793011' }}>
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                                 </svg>
                                             </Link>
@@ -167,16 +266,150 @@ export default function FrontendLayout({ children }) {
                             )}
                             {!user && (
                                 <>
-                                    <Link href={route('login')} className="text-gray-700 hover:text-indigo-600 font-medium transition-colors">
+                                    <Link 
+                                        href={route('login')} 
+                                        className="hidden sm:block px-4 py-2 text-sm font-semibold text-gray-700 transition-colors rounded-lg"
+                                        onMouseEnter={(e) => {
+                                            e.target.style.color = '#793011';
+                                            e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.color = '';
+                                            e.target.style.backgroundColor = '';
+                                        }}
+                                    >
                                         Login
                                     </Link>
-                                    <Link href={route('register')} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition-colors">
+                                    <Link 
+                                        href={route('register')} 
+                                        className="px-5 py-2.5 text-white rounded-lg font-semibold text-sm transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
+                                        style={{ backgroundColor: '#793011' }}
+                                        onMouseEnter={(e) => {
+                                            e.target.style.backgroundColor = '#5a2409';
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            e.target.style.backgroundColor = '#793011';
+                                        }}
+                                    >
                                         Register
                                     </Link>
                                 </>
                             )}
                         </div>
                     </div>
+                    
+                    {/* Mobile menu */}
+                    {mobileMenuOpen && (
+                        <div className="md:hidden border-t border-gray-200 py-4 animate-in slide-in-from-top duration-200">
+                            <div className="flex flex-col space-y-2">
+                                <Link 
+                                    href={route('home')} 
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="px-4 py-2 text-sm font-semibold text-gray-700 rounded-lg transition-colors"
+                                    onMouseEnter={(e) => {
+                                        e.target.style.color = '#793011';
+                                        e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.color = '';
+                                        e.target.style.backgroundColor = '';
+                                    }}
+                                >
+                                    Home
+                                </Link>
+                                <Link 
+                                    href={route('products.index')} 
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="px-4 py-2 text-sm font-semibold text-gray-700 rounded-lg transition-colors"
+                                    onMouseEnter={(e) => {
+                                        e.target.style.color = '#793011';
+                                        e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.color = '';
+                                        e.target.style.backgroundColor = '';
+                                    }}
+                                >
+                                    Products
+                                </Link>
+                                <a 
+                                    href="#testimonials" 
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setMobileMenuOpen(false);
+                                        const element = document.getElementById('testimonials');
+                                        if (element) {
+                                            element.scrollIntoView({ behavior: 'smooth' });
+                                        } else {
+                                            const homeUrl = route('home');
+                                            window.location.hash = 'testimonials';
+                                            router.visit(homeUrl, {
+                                                preserveScroll: false,
+                                                onSuccess: () => {
+                                                    setTimeout(() => {
+                                                        const testimonialsElement = document.getElementById('testimonials');
+                                                        if (testimonialsElement) {
+                                                            const offset = 80;
+                                                            const elementPosition = testimonialsElement.getBoundingClientRect().top;
+                                                            const offsetPosition = elementPosition + window.pageYOffset - offset;
+                                                            window.scrollTo({
+                                                                top: offsetPosition,
+                                                                behavior: 'smooth'
+                                                            });
+                                                        }
+                                                    }, 200);
+                                                }
+                                            });
+                                        }
+                                    }}
+                                    className="px-4 py-2 text-sm font-semibold text-gray-700 rounded-lg transition-colors"
+                                    onMouseEnter={(e) => {
+                                        e.target.style.color = '#793011';
+                                        e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.color = '';
+                                        e.target.style.backgroundColor = '';
+                                    }}
+                                >
+                                    Review
+                                </a>
+                                {!user && (
+                                    <>
+                                        <Link 
+                                            href={route('login')} 
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="px-4 py-2 text-sm font-semibold text-gray-700 rounded-lg transition-colors"
+                                            onMouseEnter={(e) => {
+                                                e.target.style.color = '#793011';
+                                                e.target.style.backgroundColor = 'rgba(121, 48, 17, 0.1)';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.color = '';
+                                                e.target.style.backgroundColor = '';
+                                            }}
+                                        >
+                                            Login
+                                        </Link>
+                                        <Link 
+                                            href={route('register')} 
+                                            onClick={() => setMobileMenuOpen(false)}
+                                            className="px-4 py-2 text-sm font-semibold text-white rounded-lg transition-all"
+                                            style={{ backgroundColor: '#793011' }}
+                                            onMouseEnter={(e) => {
+                                                e.target.style.backgroundColor = '#5a2409';
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.target.style.backgroundColor = '#793011';
+                                            }}
+                                        >
+                                            Register
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </div>
             </nav>
             <main className="flex-1">{children}</main>

@@ -56,6 +56,7 @@ export default function SidebarLayout({ children }) {
         ? [
               { name: 'Products', href: route('admin.products.index'), active: route().current('admin.products.*') },
               { name: 'Sellers', href: route('admin.sellers.index'), active: route().current('admin.sellers.*') },
+              { name: 'Users', href: route('admin.users.index'), active: route().current('admin.users.*') },
           ]
         : [
               { name: 'Products', href: route('seller.products.index'), active: route().current('seller.products.*') },
