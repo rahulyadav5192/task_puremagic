@@ -19,7 +19,7 @@ class ProductController extends Controller
             ->when($q, fn($qry) => $qry->where('name', 'like', "%{$q}%"))
             ->when($s, fn($qry) => $qry->where('seller_id', $s))
             ->latest()
-            ->paginate(12);
+            ->paginate(15);
 
         $sellers = User::where('role', 'seller')->get();
 
