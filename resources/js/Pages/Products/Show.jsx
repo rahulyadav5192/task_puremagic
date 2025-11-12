@@ -17,7 +17,7 @@ export default function Show({ prod }) {
                             {prod.image && (
                                 <div className="md:w-1/2">
                                     <img
-                                        src={`/storage/${prod.image}`}
+                                        src={`/${prod.image}`}
                                         alt={prod.name}
                                         className="h-full w-full object-cover"
                                     />

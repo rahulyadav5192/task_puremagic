@@ -61,7 +61,7 @@ export default function Edit({ prod }) {
                             <InputLabel htmlFor="image" value="Image" />
                             {prod.image && (
                                 <div className="mb-2">
-                                    <img src={`/storage/${prod.image}`} alt={prod.name} className="h-32 w-32 object-cover rounded" />
+                                    <img src={`/${prod.image}`} alt={prod.name} className="h-32 w-32 object-cover rounded" />
                                 </div>
                             )}
                             <input id="image" name="image" type="file" accept="image/*" className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:rounded-md file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100" onChange={(e) => form.setData('image', e.target.files[0])} />

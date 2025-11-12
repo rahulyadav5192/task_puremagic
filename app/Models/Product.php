@@ -33,4 +33,27 @@ class Product extends Model
     {
         return $this->hasMany(Cart::class);
     }
+
+    /**
+     * Get the image URL, handling both old storage paths and new public paths
+     */
+    public function getImageUrlAttribute()
+    {
+        if (!$this->image) {
+            return null;
+        }
+
+        // If it's already in the new format (images/products/...), return as is
+        if (str_starts_with($this->image, 'images/products/')) {
+            return '/' . $this->image;
+        }
+
+        // If it's in the old storage format (products/...), convert to new format
+        if (str_starts_with($this->image, 'products/')) {
+            return '/images/' . $this->image;
+        }
+
+        // Otherwise, assume it's already a full path
+        return '/' . ltrim($this->image, '/');
+    }
 }

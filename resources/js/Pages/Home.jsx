@@ -211,7 +211,7 @@ export default function Home({ list, sellers, filters }) {
                                 {p.image && (
                                     <div className="aspect-h-1 aspect-w-1 overflow-hidden bg-gray-200">
                                         <img
-                                            src={`/storage/${p.image}`}
+                                            src={`/${p.image}`}
                                             alt={p.name}
                                             className="h-64 w-full object-cover transition group-hover:scale-105"
                                         />

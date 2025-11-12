@@ -33,7 +33,7 @@ export default function Cart({ items, total }) {
                                     <div key={item.id} className="p-6 flex items-center gap-6">
                                         {item.product.image && (
                                             <img
-                                                src={`/storage/${item.product.image}`}
+                                                src={`/${item.product.image}`}
                                                 alt={item.product.name}
                                                 className="h-24 w-24 object-cover rounded"
                                             />

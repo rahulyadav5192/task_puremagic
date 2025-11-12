@@ -51,7 +51,7 @@ export default function Index({ list, sellers, filters }) {
                             >
                                 {p.image && (
                                     <img
-                                        src={`/storage/${p.image}`}
+                                        src={`/${p.image}`}
                                         alt={p.name}
                                         className="h-48 w-full object-cover"
                                     />

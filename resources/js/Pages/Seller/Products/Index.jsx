@@ -52,7 +52,7 @@ export default function Index({ list, filters }) {
                                             <td className="whitespace-nowrap px-6 py-4">
                                                 {p.image ? (
                                                     <img
-                                                        src={`/storage/${p.image}`}
+                                                        src={`/${p.image}`}
                                                         alt={p.name}
                                                         className="h-16 w-16 rounded-lg object-cover"
                                                     />

@@ -21,7 +21,7 @@ class ProductController extends Controller
                     'name' => $p->name,
                     'desc' => $p->desc,
                     'price' => $p->price,
-                    'image' => $p->image ? asset('storage/' . $p->image) : null,
+                    'image' => $p->image ? asset($p->image) : null,
                     'seller' => [
                         'name' => $p->seller->name,
                         'email' => $p->seller->email,

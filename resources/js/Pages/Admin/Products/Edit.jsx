@@ -104,7 +104,7 @@ export default function Edit({ prod, sellers }) {
                                 <InputLabel htmlFor="image" value="Image" />
                                 {prod.image && (
                                     <div className="mb-2">
-                                        <img src={`/storage/${prod.image}`} alt={prod.name} className="h-32 w-32 object-cover rounded" />
+                                        <img src={`/${prod.image}`} alt={prod.name} className="h-32 w-32 object-cover rounded" />
                                     </div>
                                 )}
                                 <input

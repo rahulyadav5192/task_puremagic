@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
@@ -42,7 +42,17 @@ class ProductController extends Controller
         $data['seller_id'] = auth()->id();
 
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('products', 'public');
+            $image = $request->file('image');
+            $imageName = Str::random(40) . '.' . $image->getClientOriginalExtension();
+            $imagePath = public_path('images/products');
+            
+            // Create directory if it doesn't exist
+            if (!file_exists($imagePath)) {
+                mkdir($imagePath, 0755, true);
+            }
+            
+            $image->move($imagePath, $imageName);
+            $data['image'] = 'images/products/' . $imageName;
         }
 
         Product::create($data);
@@ -79,10 +89,22 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            if ($product->image) {
-                Storage::disk('public')->delete($product->image);
+            // Delete old image if exists
+            if ($product->image && file_exists(public_path($product->image))) {
+                unlink(public_path($product->image));
             }
-            $data['image'] = $request->file('image')->store('products', 'public');
+            
+            $image = $request->file('image');
+            $imageName = Str::random(40) . '.' . $image->getClientOriginalExtension();
+            $imagePath = public_path('images/products');
+            
+            // Create directory if it doesn't exist
+            if (!file_exists($imagePath)) {
+                mkdir($imagePath, 0755, true);
+            }
+            
+            $image->move($imagePath, $imageName);
+            $data['image'] = 'images/products/' . $imageName;
         } else {
             unset($data['image']);
         }
@@ -98,8 +120,8 @@ class ProductController extends Controller
             abort(403);
         }
 
-        if ($product->image) {
-            Storage::disk('public')->delete($product->image);
+        if ($product->image && file_exists(public_path($product->image))) {
+            unlink(public_path($product->image));
         }
         $product->delete();
         return redirect()->route('seller.products.index');
